@@ -1,15 +1,13 @@
+import Link from 'next/link';
 import HomeLists from '@/components/HomeLists';
-import { DESKTOP_APP_URL } from '@/lib/config';
+import { DESKTOP_APP_FILE_ID } from '@/lib/config';
 
 export default function Home() {
-  const external = DESKTOP_APP_URL.startsWith('http');
-
   return (
     <main className="mx-auto max-w-6xl space-y-12 px-6 py-8">
-      <a
-        href={DESKTOP_APP_URL}
-        target={external ? '_blank' : undefined}
-        rel={external ? 'noreferrer' : undefined}
+      <Link
+        href={`/f/${DESKTOP_APP_FILE_ID}/${DESKTOP_APP_FILE_ID}`}
+        prefetch={false}
         className="flex items-center justify-between rounded-[2rem] bg-[#222] px-8 py-8 text-white transition hover:bg-[#2c2c2c] sm:px-12"
       >
         <div>
@@ -17,13 +15,13 @@ export default function Home() {
             데스크톱 앱으로도 쓸 수 있어요
           </p>
           <p className="mt-2 text-sm text-gray-300">
-            설치 프로그램 다운로드 페이지로 이동해요 →
+            누르면 설치 프로그램이 바로 다운로드돼요 →
           </p>
         </div>
         <span className="text-6xl" aria-hidden>
           🖥️
         </span>
-      </a>
+      </Link>
 
       <HomeLists />
     </main>

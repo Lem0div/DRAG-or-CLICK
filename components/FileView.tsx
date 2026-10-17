@@ -4,22 +4,19 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
-import { countDownload } from '@/lib/downloads';
-import { BUCKET, formatSize, PICK } from '@/lib/config';
+import { formatSize, PICK } from '@/lib/config';
 
 type FileRow = {
   id: string;
   name: string;
   size: number;
-  storage_path: string;
   likes: number;
   downloads: number;
   owner_name: string;
   created_at: string;
 };
 
-const COLUMNS =
-  'id, name, size, storage_path, likes, downloads, owner_name, created_at';
+const COLUMNS = 'id, name, size, likes, downloads, owner_name, created_at';
 
 export default function FileView() {
   const { id } = useParams<{ id: string }>();
@@ -69,12 +66,6 @@ export default function FileView() {
     setBusy(false);
   };
 
-  const onDownload = () => {
-    if (!file) return;
-    countDownload(file.id);
-    setFile({ ...file, downloads: file.downloads + 1 });
-  };
-
   if (status === 'loading') {
     return (
       <main className="flex min-h-[calc(100vh-3.5rem)] items-center justify-center">
@@ -94,11 +85,6 @@ export default function FileView() {
     );
   }
 
-  // ?download=원본이름 이 붙어서 클릭하면 원래 파일명으로 저장됨
-  const downloadUrl = supabase.storage
-    .from(BUCKET)
-    .getPublicUrl(file.storage_path, { download: file.name }).data.publicUrl;
-
   return (
     <main className="flex min-h-[calc(100vh-3.5rem)] flex-col items-center justify-center gap-6 p-6">
       <div className="w-full max-w-xl rounded-2xl border p-6">
@@ -109,13 +95,15 @@ export default function FileView() {
         </p>
 
         <div className="mt-6 flex gap-3">
-          <a
-            href={downloadUrl}
-            onClick={onDownload}
+          {/* /f/[id]/[id]로 이동해서 받고, 다 받으면 이 페이지로 돌아와 */}
+          <Link
+            href={`/f/${file.id}/${file.id}`}
+            replace
+            prefetch={false}
             className="flex-1 rounded-xl bg-black py-3 text-center font-semibold text-white"
           >
             다운로드
-          </a>
+          </Link>
           <button
             onClick={toggleLike}
             disabled={busy}
