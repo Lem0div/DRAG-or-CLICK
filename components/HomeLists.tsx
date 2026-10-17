@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
+import { countDownload } from '@/lib/downloads';
 import { BUCKET, formatSize, PICK } from '@/lib/config';
 
 type FileRow = {
@@ -124,9 +125,10 @@ export default function HomeLists() {
   }, []);
 
   const handleDownload = (id: string) => {
-    supabase.rpc('count_download', { file_id: id });
+    countDownload(id);
     const bump = (list: FileRow[] | null) =>
-      list && list.map((f) => (f.id === id ? { ...f, downloads: f.downloads + 1 } : f));
+      list &&
+      list.map((f) => (f.id === id ? { ...f, downloads: f.downloads + 1 } : f));
     setByLikes((prev) => bump(prev));
     setByDownloads((prev) => bump(prev));
   };

@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
+import { countDownload } from '@/lib/downloads';
 import { BUCKET, formatSize, PICK } from '@/lib/config';
 
 type FileRow = {
@@ -70,7 +71,7 @@ export default function FileView() {
 
   const onDownload = () => {
     if (!file) return;
-    supabase.rpc('count_download', { file_id: file.id });
+    countDownload(file.id);
     setFile({ ...file, downloads: file.downloads + 1 });
   };
 
